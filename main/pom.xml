@@ -30,11 +30,23 @@
     </dependency>
 
 
-
+    <!-- module utils -->
     <dependency>
       <groupId>pl.project</groupId>
       <artifactId>utils</artifactId>
       <version>1.0</version>
     </dependency>
+
+    <!-- jackson for json    -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.16.1</version>
+    </dependency>
+
+
+
+
   </dependencies>
+
 </project>
