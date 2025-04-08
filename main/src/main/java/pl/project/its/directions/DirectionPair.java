@@ -1,9 +1,11 @@
 package pl.project.its.directions;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.Objects;
 
+@Getter
 @AllArgsConstructor
 public class DirectionPair {
     public final Direction startRoad;
@@ -21,5 +23,4 @@ public class DirectionPair {
     public int hashCode() {
         return Objects.hash(startRoad, endRoad);
     }
-
 }

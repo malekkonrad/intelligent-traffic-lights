@@ -17,9 +17,9 @@ public class TrafficLightController {
 
 
     // myśle że w przyszłości zamienić Direction na DirectionPair
-    private final Map<Direction, Queue<Vehicle>> queues;
+    private final Map<Direction, List<Lane>>  queues;
 
-    public TrafficLightController(Map<Direction, Queue<Vehicle>> queues) {
+    public TrafficLightController(Map<Direction, List<Lane>>  queues) {
         this.queues = queues;
         phases = List.of(
                 // phase 1:
@@ -82,16 +82,16 @@ public class TrafficLightController {
 
     // adaptacyjne obliczenie długości fazy (im więcej aut, tym dłużej)
     private int estimatePhaseDuration(TrafficLightPhase phase) {
-        int totalVehicles = 0;
-        for (Direction dir : Direction.values()) {
-            Queue<Vehicle> q = queues.get(dir);
-            if (q == null || q.isEmpty()) continue;
-
-            Vehicle peek = q.peek();
-            if (peek != null && phase.allows(peek.getStartRoad(), peek.getEndRoad())) {
-                totalVehicles += q.size();
-            }
-        }
+//        int totalVehicles = 0;
+//        for (Direction dir : Direction.values()) {
+//            Queue<Vehicle> q = queues.get(dir);
+//            if (q == null || q.isEmpty()) continue;
+//
+//            Vehicle peek = q.peek();
+//            if (peek != null && phase.allows(peek.getStartRoad(), peek.getEndRoad())) {
+//                totalVehicles += q.size();
+//            }
+//        }
 
 //        return Math.max(1, Math.min(1, totalVehicles)); // min. 1 krok, max. 5
         return 1;
@@ -102,6 +102,12 @@ public class TrafficLightController {
     public boolean canPass(Vehicle vehicle) {
         // pobieram aktualną faze - phase i sprawdzam czy dozwolony jest ruch
         return phases.get(currentPhaseIndex).allows(vehicle.getStartRoad(), vehicle.getEndRoad());
+    }
+
+
+    // TODO do zmiany jakoś inaczej - może wprowadzić ten TrafficLightPhase????
+    public Set<DirectionPair> getGreenDirections(){
+        return phases.get(currentPhaseIndex).getAllowedMovements();
     }
 
 
