@@ -1,0 +1,17 @@
+package pl.project.its;
+
+import lombok.AllArgsConstructor;
+import pl.project.its.directions.Direction;
+import pl.project.its.directions.DirectionPair;
+
+import java.util.Set;
+
+@AllArgsConstructor
+public class TrafficLightPhase {
+
+    private final Set<DirectionPair> allowedMovements;
+
+    public boolean allows(Direction start, Direction end) {
+        return allowedMovements.contains(new DirectionPair(start, end));
+    }
+}
