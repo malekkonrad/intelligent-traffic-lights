@@ -1,9 +1,7 @@
-package pl.project.its;
+package pl.project.json.structures;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import pl.project.its.directions.Direction;
 
 import java.util.Map;
 

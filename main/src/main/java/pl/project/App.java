@@ -4,10 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import pl.project.its.Intersection;
-import pl.project.its.lane.Lane;
-import pl.project.its.lane.LaneManager;
-import pl.project.its.Vehicle;
-import pl.project.its.directions.Direction;
+import pl.project.json.structures.Lane;
+import pl.project.json.structures.Vehicle;
+import pl.project.json.structures.Direction;
 import pl.project.json.JsonReader;
 import pl.project.json.JsonWriter;
 import pl.project.json.structures.input.Command;
@@ -28,24 +27,15 @@ public class App
     public static void main( String... args ) throws Exception {
 
         // parsing files name
-        try{
-
-            inputFile = args[0];
-            outputFile = args[1];
-
-        }catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
-
-
-
+        parseArguments(args);
 
         // wczytanie ustawień skrzyżowania!
-        LaneManager laneManager = new LaneManager();
-        laneManager.loadFromJson("config.json");
+//        LaneManager laneManager = Js
+//
+//
+//        laneManager.loadFromJson("config.json");
 
-        Map<Direction, List<Lane>> lanes = laneManager.getLanesPerDirection();
+        Map<Direction, List<Lane>> lanes = JsonReader.loadLanesFromJson("config.json");
         for (Direction dir : lanes.keySet()) {
             System.out.println("Direction: " + dir);
             for (Lane lane : lanes.get(dir)) {
@@ -54,14 +44,15 @@ public class App
         }
 
         // wczytanie listy komend
-        JsonReader jsonReader = new JsonReader(inputFile);
-        CommandList commandList = jsonReader.read();
+//        JsonReader jsonReader = new JsonReader(inputFile);
+
+        CommandList commandList = JsonReader.loadCommandList(inputFile);
 
         // Obiekt w którym będę zapisywał statusy
         StepStatusList stepStatusList = new StepStatusList();
 
 
-        Intersection intersection = new Intersection(laneManager.getLanesPerDirection());
+        Intersection intersection = new Intersection(lanes);
 
         // Przejście po komendach
         for (Command cmd : commandList.getCommands()) {
@@ -83,5 +74,18 @@ public class App
         jsonWriter.writeToFile(stepStatusList);
 
 
+    }
+
+
+    public static void parseArguments(String... args) throws Exception {
+        // parsing files name
+        try{
+
+            inputFile = args[0];
+            outputFile = args[1];
+
+        }catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

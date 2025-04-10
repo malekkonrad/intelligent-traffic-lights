@@ -1,9 +1,8 @@
-package pl.project.its.lane;
+package pl.project.json.structures;
 
 import lombok.Getter;
 import lombok.Setter;
-import pl.project.its.Vehicle;
-import pl.project.its.directions.Direction;
+import pl.project.json.structures.Vehicle;
 
 import java.util.*;
 

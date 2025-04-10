@@ -1,8 +1,9 @@
 package pl.project.its;
 
-import pl.project.its.directions.Direction;
+import pl.project.json.structures.Direction;
 import pl.project.its.directions.DirectionPair;
-import pl.project.its.lane.Lane;
+import pl.project.json.structures.Lane;
+import pl.project.json.structures.Vehicle;
 
 import java.util.*;
 
