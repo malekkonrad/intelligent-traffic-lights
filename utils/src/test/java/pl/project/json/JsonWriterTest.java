@@ -1,46 +1,73 @@
 package pl.project.json;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import pl.project.json.structures.output.StepStatusList;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Arrays;
+import java.nio.file.Paths;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class JsonWriterTest {
 
-//    @Test
-//    public void testWriteToFile_createsJsonFileWithCorrectContent() throws IOException {
-//        // given
-//        StepStatusList list = new StepStatusList();
-//
-//        list.addStep(Arrays.asList("aaa", "bbb", "ccc"));
-//        list.addStep(Arrays.asList("ada", "acca", "seww"));
-//
-//
-//        File tempFile = Files.createTempFile("step_status", ".json").toFile();
-//        JsonWriter writer = new JsonWriter(tempFile.getAbsolutePath());
-//
-//        // when
-//        writer.writeToFile(list);
-//
-//        // then
-//        ObjectMapper mapper = new ObjectMapper();
-//        StepStatusList result = mapper.readValue(tempFile, StepStatusList.class);
-//
-//        assertTrue(list.equals(result));
-//        assertTrue(tempFile.exists());
-//    }
+    private static final String TEST_FILE_PATH = "src/test/resources/test_output.json";
 
-    @Test
-    public void testWriteToFile_invalidPath_throwsIOException() {
-        String invalidPath = "/invalid_path/step.json";
-        JsonWriter writer = new JsonWriter(invalidPath);
-        StepStatusList list = new StepStatusList();
-        assertThrows(IOException.class, () -> writer.writeToFile(list));
+    @AfterEach
+    void cleanUp() {
+        // Usuwanie pliku testowego po każdym teście
+        File file = new File(TEST_FILE_PATH);
+        if (file.exists()) {
+            file.delete();
+        }
     }
 
+    @Test
+    void testWriteToFile_createsJsonFileWithCorrectContent() throws IOException {
+        // given
+        StepStatusList stepStatusList = new StepStatusList();
+        stepStatusList.addStep(List.of("vehicle1", "vehicle2"));
+        stepStatusList.addStep(List.of("vehicle3"));
+
+        // when
+        JsonWriter.writeToFile(TEST_FILE_PATH, stepStatusList);
+
+        // then
+        File file = new File(TEST_FILE_PATH);
+        assertTrue(file.exists(), "Plik JSON nie został utworzony");
+
+        String content = Files.readString(Paths.get(TEST_FILE_PATH));
+        assertTrue(content.contains("\"leftVehicles\" : [ \"vehicle1\", \"vehicle2\" ]"));
+        assertTrue(content.contains("\"leftVehicles\" : [ \"vehicle3\" ]"));
+    }
+
+    @Test
+    void testWriteToFile_invalidPath_throwsIOException() {
+        // given
+        String invalidPath = "/invalid_path/test_output.json";
+        StepStatusList stepStatusList = new StepStatusList();
+        stepStatusList.addStep(List.of("vehicle1"));
+
+        // when & then
+        assertThrows(IOException.class, () -> JsonWriter.writeToFile(invalidPath, stepStatusList));
+    }
+
+    @Test
+    void testWriteToFile_emptyStepStatusList_createsEmptyJsonFile() throws IOException {
+        // given
+        StepStatusList stepStatusList = new StepStatusList();
+
+        // when
+        JsonWriter.writeToFile(TEST_FILE_PATH, stepStatusList);
+
+        // then
+        File file = new File(TEST_FILE_PATH);
+        assertTrue(file.exists(), "Plik JSON nie został utworzony");
+
+        String content = Files.readString(Paths.get(TEST_FILE_PATH));
+        assertTrue(content.contains("\"stepStatuses\" : [ ]"), "Plik JSON nie zawiera pustej listy kroków");
+    }
 }

@@ -29,13 +29,10 @@ public class App
         // parsing files name
         parseArguments(args);
 
-        // wczytanie ustawień skrzyżowania!
-//        LaneManager laneManager = Js
-//
-//
-//        laneManager.loadFromJson("config.json");
 
         Map<Direction, List<Lane>> lanes = JsonReader.loadLanesFromJson("config.json");
+
+
         for (Direction dir : lanes.keySet()) {
             System.out.println("Direction: " + dir);
             for (Lane lane : lanes.get(dir)) {
@@ -43,8 +40,6 @@ public class App
             }
         }
 
-        // wczytanie listy komend
-//        JsonReader jsonReader = new JsonReader(inputFile);
 
         CommandList commandList = JsonReader.loadCommandList(inputFile);
 
@@ -70,8 +65,7 @@ public class App
 
 
         // zapis
-        JsonWriter jsonWriter = new JsonWriter(outputFile);
-        jsonWriter.writeToFile(stepStatusList);
+        JsonWriter.writeToFile(outputFile ,stepStatusList);
 
 
     }
