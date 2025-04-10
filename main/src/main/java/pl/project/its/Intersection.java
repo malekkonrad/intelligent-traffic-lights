@@ -17,6 +17,7 @@ public class Intersection {
     //                      Lane ->
     //                                Map<Destination (type Direction), Queue<Vehicle>
 
+
     private Map<Direction, List<Lane>> lanesPerDirection = new EnumMap<>(Direction.class);
 
     private final TrafficLightController controller;
@@ -24,9 +25,9 @@ public class Intersection {
 
 
 
-    public Intersection(Map<Direction, List<Lane>> newQueues) {
-        lanesPerDirection = newQueues;
-        controller = new TrafficLightController(newQueues); // przekazujemy referencję
+    public Intersection(Map<Direction, List<Lane>> lanesPerDirection) {
+        this.lanesPerDirection = lanesPerDirection;
+        controller = new TrafficLightController(lanesPerDirection);
     }
 
 
@@ -60,13 +61,18 @@ public class Intersection {
     }
 
 
-
+    /**
+     * Main method to execute step in simulation.
+     * returns: leftVehicles
+     */
     public List<String> step() {
         List<String> leftVehicles = new ArrayList<>();
 
         // directions from current TrafficLightPhase
         Set<DirectionPair> greenDirections = controller.getGreenDirections();
-
+        for (DirectionPair directionPair : greenDirections) {
+            System.out.print("kierunkek: " + directionPair.toString() + " ");
+        }
 
         for (DirectionPair pair : greenDirections) {
 
@@ -91,7 +97,9 @@ public class Intersection {
             }
         }
 
-        controller.nextStep(); // zmień fazę świateł
+        // zmień fazę świateł - lub bardziej dostosuj fazę świateł
+        controller.nextStep();
+        System.out.print(" leftVehicles: " + leftVehicles.toString() + " \n");
         return leftVehicles;
     }
 

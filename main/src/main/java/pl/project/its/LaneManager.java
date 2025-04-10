@@ -11,9 +11,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+@Getter
 public class LaneManager {
 
-    @Getter
     private final Map<Direction, List<Lane>> lanesPerDirection = new EnumMap<>(Direction.class);
 
     public void loadFromJson(String filePath) throws Exception {

@@ -1,7 +1,6 @@
 package pl.project.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import pl.project.json.structures.input.Command;
 import pl.project.json.structures.input.CommandList;
 
 import java.io.File;

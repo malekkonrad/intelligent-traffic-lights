@@ -1,5 +1,7 @@
 package pl.project;
 
+import java.util.List;
+import java.util.Map;
 
 import pl.project.its.Intersection;
 import pl.project.its.Lane;
@@ -10,14 +12,9 @@ import pl.project.json.JsonReader;
 import pl.project.json.JsonWriter;
 import pl.project.json.structures.input.Command;
 import pl.project.json.structures.input.CommandList;
-import pl.project.json.structures.output.StepStatus;
 import pl.project.json.structures.output.StepStatusList;
 
-import java.io.IOException;
-import java.util.Arrays;
 
-import java.util.List;
-import java.util.Map;
 
 /**
  * Main program that runs intelligent traffic lights

@@ -23,4 +23,9 @@ public class DirectionPair {
     public int hashCode() {
         return Objects.hash(startRoad, endRoad);
     }
+
+    @Override
+    public String toString() {
+        return startRoad + " " + endRoad;
+    }
 }

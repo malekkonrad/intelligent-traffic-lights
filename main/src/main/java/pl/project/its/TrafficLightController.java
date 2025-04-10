@@ -3,20 +3,24 @@ package pl.project.its;
 import pl.project.its.directions.Direction;
 import pl.project.its.directions.DirectionPair;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 public class TrafficLightController {
 
     private final List<TrafficLightPhase> phases;
     private int currentPhaseIndex = 0;
-
     private int phaseStepCounter = 0;
 
+    /**
+     * Important to remember is that we are considering DirectionPair not Lanes because there can be multiple lanes in
+     * specific DirectionPair (from -> to)
+     */
+    private final Map<DirectionPair, Integer> waitingTime = new HashMap<>();
+    private final int maxWaitTime = 5; // maksymalna liczba kroków oczekiwania
+    private final double alpha = 1.0; // waga natężenia
+    private final double beta = 0.5; // waga czasu oczekiwania
 
-    // myśle że w przyszłości zamienić Direction na DirectionPair
+
     private final Map<Direction, List<Lane>>  queues;
 
     public TrafficLightController(Map<Direction, List<Lane>>  queues) {
@@ -64,20 +68,63 @@ public class TrafficLightController {
 
 
     public void nextStep() {
-        phaseStepCounter++;
 
-        // dopasowanie długości fazy do natężenia aut na danym kierunku
-        int currentPhaseDuration = estimatePhaseDuration(phases.get(currentPhaseIndex));
+        updateWaitingTimes(phases.get(currentPhaseIndex).getAllowedMovements());
 
-        currentPhaseIndex = (currentPhaseIndex + 1) % phases.size();
 
-        // przejście do następnej fazy i wyzerowanie licznika długości obecnej
-        if (phaseStepCounter >= currentPhaseDuration) {
-            currentPhaseIndex = (currentPhaseIndex + 1) % phases.size();
-            phaseStepCounter = 0;
+
+
+
+        for (Map.Entry<DirectionPair, Integer> entry : waitingTime.entrySet()){
+
+            // sprawdzam czy któryś DirectionPair czeka za długo
+            if (entry.getValue() >= maxWaitTime){
+
+                // Znajduje fazę która zawiera kierunek zbyt długo czekający
+                for (int i = 0; i < phases.size(); i++){
+                    if (phases.get(i).getAllowedMovements().contains(entry.getKey())){  // entry.getKey() -> DirectionPair
+                        currentPhaseIndex = i;
+                        phaseStepCounter = 0;
+                        return;
+                    }
+                }
+            }
         }
 
+
+        // adaptacyjny wybór fazy
+        currentPhaseIndex = selectBestPhase();
+        phaseStepCounter = 0;
+
+
+//        phaseStepCounter++;
+
+
+//
+//
+//
+//
+//
+//        // dopasowanie długości fazy do natężenia aut na danym kierunku
+//        int currentPhaseDuration = estimatePhaseDuration(phases.get(currentPhaseIndex));
+//
+//        currentPhaseIndex = (currentPhaseIndex + 1) % phases.size();
+//
+//        // przejście do następnej fazy i wyzerowanie licznika długości obecnej
+//        if (phaseStepCounter >= currentPhaseDuration) {
+//            currentPhaseIndex = (currentPhaseIndex + 1) % phases.size();
+//            phaseStepCounter = 0;
+//        }
+
     }
+
+
+    /*
+
+    a co jakby liczona jest średnia aut przejeżdzająca w danej fazie i
+
+     */
+
 
 
     // adaptacyjne obliczenie długości fazy (im więcej aut, tym dłużej)
@@ -98,7 +145,6 @@ public class TrafficLightController {
     }
 
 
-
     public boolean canPass(Vehicle vehicle) {
         // pobieram aktualną faze - phase i sprawdzam czy dozwolony jest ruch
         return phases.get(currentPhaseIndex).allows(vehicle.getStartRoad(), vehicle.getEndRoad());
@@ -109,6 +155,69 @@ public class TrafficLightController {
     public Set<DirectionPair> getGreenDirections(){
         return phases.get(currentPhaseIndex).getAllowedMovements();
     }
+
+
+
+    private void updateWaitingTimes(Set<DirectionPair> greenDirections) {
+        for (TrafficLightPhase phase : phases) {
+            for (DirectionPair pair : phase.getAllowedMovements()) {
+                if (greenDirections.contains(pair)) {
+                    waitingTime.put(pair, 0); // zresetuj jeśli przepuszczamy
+                } else {
+                    waitingTime.put(pair, waitingTime.getOrDefault(pair, 0) + 1);
+                }
+            }
+        }
+    }
+
+    private int selectBestPhase() {
+        int bestIndex = 0;
+        double bestScore = -1;
+
+        for (int i = 0; i < phases.size(); i++) {
+            TrafficLightPhase phase = phases.get(i);
+            double score = 0.0;
+
+            for (DirectionPair pair : phase.getAllowedMovements()) {
+                int count = countVehicles(pair); // ile aut chce jechać w tym kierunku
+                int wait = waitingTime.getOrDefault(pair, 0);
+
+                // większy priorytet dla zatłoczonych i długo czekających
+                score += alpha * count + beta * wait;
+            }
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestIndex = i;
+            }
+        }
+
+        return bestIndex;
+    }
+
+
+    private int countVehicles(DirectionPair pair) {
+        Direction from = pair.getStartRoad();
+        Direction to = pair.getEndRoad();
+        List<Lane> lanes = queues.get(from);
+
+        int total = 0;
+        if (lanes == null) return 0;
+
+        for (Lane lane : lanes) {
+            if (lane.getAllowedDestinations().contains(to)) {
+                Queue<Vehicle> q = lane.getVehicles();
+                if (!q.isEmpty() && q.peek().getEndRoad() == to) {
+                    total += q.size();
+                }
+            }
+        }
+        return total;
+    }
+
+
+
+
 
 
 }
