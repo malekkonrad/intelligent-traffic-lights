@@ -1,4 +1,4 @@
-package pl.project.its;
+package pl.project.its.lane;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import pl.project.its.Intersection;
-import pl.project.its.Lane;
-import pl.project.its.LaneManager;
+import pl.project.its.lane.Lane;
+import pl.project.its.lane.LaneManager;
 import pl.project.its.Vehicle;
 import pl.project.its.directions.Direction;
 import pl.project.json.JsonReader;
@@ -21,7 +21,7 @@ import pl.project.json.structures.output.StepStatusList;
  */
 public class App 
 {
-    static String inputFile = "krzyz.json";
+    static String inputFile = "duzo_na_raz.json";
     static String outputFile = "output.json";
 
 

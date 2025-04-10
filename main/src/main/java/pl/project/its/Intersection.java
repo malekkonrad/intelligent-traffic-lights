@@ -2,6 +2,7 @@ package pl.project.its;
 
 import pl.project.its.directions.Direction;
 import pl.project.its.directions.DirectionPair;
+import pl.project.its.lane.Lane;
 
 import java.util.*;
 

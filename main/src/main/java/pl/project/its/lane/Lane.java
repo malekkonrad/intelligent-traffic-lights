@@ -1,7 +1,8 @@
-package pl.project.its;
+package pl.project.its.lane;
 
 import lombok.Getter;
 import lombok.Setter;
+import pl.project.its.Vehicle;
 import pl.project.its.directions.Direction;
 
 import java.util.*;
@@ -28,6 +29,15 @@ public class Lane{
         vehicles.add(vehicle);
     }
 
+    public int size(Direction endRoad) {
+        int sum = 0;
+        for (Vehicle vehicle : vehicles) {
+            if (vehicle.getEndRoad().equals(endRoad)) {
+                sum += 1;
+            }
+        }
+        return sum;
+    }
 
     public int getSumWaitingTime(Direction endRoad) {
         int delay = 0;

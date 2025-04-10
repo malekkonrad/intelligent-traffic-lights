@@ -2,6 +2,7 @@ package pl.project.its;
 
 import pl.project.its.directions.Direction;
 import pl.project.its.directions.DirectionPair;
+import pl.project.its.lane.Lane;
 
 import java.util.*;
 
@@ -15,6 +16,7 @@ public class TrafficLightController {
      * Important to remember is that we are considering DirectionPair not Lanes because there can be multiple lanes in
      * specific DirectionPair (from -> to)
      */
+    private final Map<DirectionPair, Integer> waitingVehicles = new HashMap<>();
     private final Map<DirectionPair, Integer> waitingTime = new HashMap<>();
     private final int maxWaitTime = 5; // maksymalna liczba kroków oczekiwania
     private final double alpha = 1.0; // waga natężenia
@@ -66,14 +68,14 @@ public class TrafficLightController {
         );
 
         // do przemyślenia
-        Map<DirectionPair, Set<DirectionPair>> conflictMap = Map.of(
-                new DirectionPair(Direction.NORTH, Direction.SOUTH), Set.of(
-                        new DirectionPair(Direction.WEST, Direction.EAST),
-                        new DirectionPair(Direction.EAST, Direction.WEST),
-                        new DirectionPair(Direction.WEST, Direction.NORTH),
-                        new DirectionPair(Direction.EAST, Direction.SOUTH)
-                )
-        );
+//        Map<DirectionPair, Set<DirectionPair>> conflictMap = Map.of(
+//                new DirectionPair(Direction.NORTH, Direction.SOUTH), Set.of(
+//                        new DirectionPair(Direction.WEST, Direction.EAST),
+//                        new DirectionPair(Direction.EAST, Direction.WEST),
+//                        new DirectionPair(Direction.WEST, Direction.NORTH),
+//                        new DirectionPair(Direction.EAST, Direction.SOUTH)
+//                )
+//        );
     }
 
 
@@ -83,7 +85,12 @@ public class TrafficLightController {
         // po wyborze fazy sprawdzamy, czy nie ma pairów z max delayem
         for (Map.Entry<Direction, List<Lane>> entry : queues.entrySet()) {
             for (Lane lane : entry.getValue()) {
+                // TODO tutaj w teori nie musiałoby być pęli bo powinniśmy sprawdzać tylko pierwszego auta - reszta nie może mieć większej oczekiwania!
                 for (Vehicle vehicle : lane.getVehicles()) {
+
+                    // TODO tutuj będzie zmieniany delay -> lepiej chyba jak on
+
+                    getDynamicMaxWaitTime(vehicle);
                     if (vehicle.getDelay() >= maxWaitTime) {
                         DirectionPair pair = new DirectionPair(vehicle.getStartRoad(), vehicle.getEndRoad());
                         // znajdź fazę, która to obsługuje
@@ -121,6 +128,7 @@ public class TrafficLightController {
     public void updateWaitingTimes() {
 
         waitingTime.clear();
+        waitingVehicles.clear();
 
         for (Map.Entry<Direction, List<Lane>> entry : queues.entrySet()){
             Direction from = entry.getKey();
@@ -136,6 +144,7 @@ public class TrafficLightController {
                 for (Direction direction: lane.getAllowedDestinations()){
                     DirectionPair directionPair = new DirectionPair(from , direction);
                     waitingTime.put(directionPair, lane.getSumWaitingTime(direction));
+                    waitingVehicles.put(directionPair, lane.size(direction));
                 }
             }
         }
@@ -169,7 +178,7 @@ public class TrafficLightController {
         return bestIndex;
     }
 
-
+    // TODO czy do usunięcia
     private int countVehicles(DirectionPair pair) {
         Direction from = pair.getStartRoad();
         Direction to = pair.getEndRoad();
@@ -188,6 +197,53 @@ public class TrafficLightController {
         }
         return total;
     }
+
+
+    private int getDynamicMaxWaitTime(Vehicle vehicle) {
+
+        Direction from = vehicle.getStartRoad();
+        Direction to = vehicle.getEndRoad();
+
+
+        int allVehiclesCount = 0;
+        int vehiclesCount = 0;
+
+        TrafficLightPhase myPhase = null;
+        for (TrafficLightPhase phase : phases) {
+            if (phase.getAllowedMovements().contains(new DirectionPair(from, to))) {
+                myPhase = phase;
+            }
+        }
+
+
+        for (DirectionPair directionPair : waitingVehicles.keySet()) {
+            assert myPhase != null;
+            if (myPhase.getAllowedMovements().contains(directionPair)) {
+                vehiclesCount += waitingVehicles.get(directionPair);
+            }
+            allVehiclesCount += waitingVehicles.get(directionPair);
+        }
+
+        System.out.println(allVehiclesCount + " " + vehiclesCount);
+//
+//
+//        DirectionPair pair = new DirectionPair(vehicle.getStartRoad(), vehicle.getEndRoad());
+//
+//        // Znajdź kolidujące kierunki
+//        Set<DirectionPair> conflicting = conflictMap.get(pair); // to musisz mieć – zbiór konfliktów
+//
+//        int totalBlockingVehicles = 0;
+//        for (DirectionPair conflict : conflicting) {
+//            totalBlockingVehicles += queueSizeForDirectionPair(conflict); // metoda pomocnicza
+//        }
+//
+//        // Im większy ruch w kolidujących kierunkach, tym większy dopuszczalny delay
+//        // min. 5, max np. 15 – zależnie od ruchu
+//        return Math.min(15, 5 + totalBlockingVehicles);
+        return allVehiclesCount;
+    }
+
+
 
 
 
