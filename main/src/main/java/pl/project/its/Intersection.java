@@ -68,10 +68,16 @@ public class Intersection {
     public List<String> step() {
         List<String> leftVehicles = new ArrayList<>();
 
+        // Update waiting times - some vehicles left the intersection so we need to keep that in mind
+        controller.updateWaitingTimes();
+
+
+        controller.nextStep();
         // directions from current TrafficLightPhase
         Set<DirectionPair> greenDirections = controller.getGreenDirections();
+
         for (DirectionPair directionPair : greenDirections) {
-            System.out.print("kierunkek: " + directionPair.toString() + " ");
+            System.out.print(" kierunkek: " + directionPair.toString() + " ");
         }
 
         for (DirectionPair pair : greenDirections) {
@@ -95,10 +101,10 @@ public class Intersection {
                     }
                 }
             }
+
+
         }
 
-        // zmień fazę świateł - lub bardziej dostosuj fazę świateł
-        controller.nextStep();
         System.out.print(" leftVehicles: " + leftVehicles.toString() + " \n");
         return leftVehicles;
     }

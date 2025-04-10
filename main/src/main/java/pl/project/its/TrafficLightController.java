@@ -64,12 +64,13 @@ public class TrafficLightController {
                 ))
 
         );
+//        currentPhaseIndex = selectBestPhase();
     }
 
 
     public void nextStep() {
+        currentPhaseIndex = selectBestPhase();
 
-        updateWaitingTimes(phases.get(currentPhaseIndex).getAllowedMovements());
 
 
 
@@ -93,38 +94,10 @@ public class TrafficLightController {
 
 
         // adaptacyjny wybór fazy
-        currentPhaseIndex = selectBestPhase();
+//        currentPhaseIndex = selectBestPhase();
         phaseStepCounter = 0;
-
-
-//        phaseStepCounter++;
-
-
-//
-//
-//
-//
-//
-//        // dopasowanie długości fazy do natężenia aut na danym kierunku
-//        int currentPhaseDuration = estimatePhaseDuration(phases.get(currentPhaseIndex));
-//
-//        currentPhaseIndex = (currentPhaseIndex + 1) % phases.size();
-//
-//        // przejście do następnej fazy i wyzerowanie licznika długości obecnej
-//        if (phaseStepCounter >= currentPhaseDuration) {
-//            currentPhaseIndex = (currentPhaseIndex + 1) % phases.size();
-//            phaseStepCounter = 0;
-//        }
-
+//        updateWaitingTimes();
     }
-
-
-    /*
-
-    a co jakby liczona jest średnia aut przejeżdzająca w danej fazie i
-
-     */
-
 
 
     // adaptacyjne obliczenie długości fazy (im więcej aut, tym dłużej)
@@ -158,16 +131,28 @@ public class TrafficLightController {
 
 
 
-    private void updateWaitingTimes(Set<DirectionPair> greenDirections) {
-        for (TrafficLightPhase phase : phases) {
-            for (DirectionPair pair : phase.getAllowedMovements()) {
-                if (greenDirections.contains(pair)) {
-                    waitingTime.put(pair, 0); // zresetuj jeśli przepuszczamy
-                } else {
-                    waitingTime.put(pair, waitingTime.getOrDefault(pair, 0) + 1);
+    public void updateWaitingTimes() {
+
+        waitingTime.clear();
+
+        for (Map.Entry<Direction, List<Lane>> entry : queues.entrySet()){
+            Direction from = entry.getKey();
+
+
+            // aktualizuje czas oczekiwania
+            for (Lane lane : entry.getValue()){
+                for (Vehicle vehicle : lane.getVehicles()){
+                    vehicle.setDelay(vehicle.getDelay() + 1);       // TODO dodać dedykowaną metodę
+                }
+
+
+                for (Direction direction: lane.getAllowedDestinations()){
+                    DirectionPair directionPair = new DirectionPair(from , direction);
+                    waitingTime.put(directionPair, lane.getSumWaitingTime(direction));
                 }
             }
         }
+
     }
 
     private int selectBestPhase() {

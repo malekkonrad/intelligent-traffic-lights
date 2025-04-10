@@ -21,7 +21,7 @@ import pl.project.json.structures.output.StepStatusList;
  */
 public class App 
 {
-    static String inputFile = "commands.json";
+    static String inputFile = "data.json";
     static String outputFile = "output.json";
 
 
@@ -43,7 +43,7 @@ public class App
 
         // wczytanie ustawień skrzyżowania!
         LaneManager laneManager = new LaneManager();
-        laneManager.loadFromJson("config.json");
+        laneManager.loadFromJson("new_config.json");
 
         Map<Direction, List<Lane>> lanes = laneManager.getLanesPerDirection();
         for (Direction dir : lanes.keySet()) {

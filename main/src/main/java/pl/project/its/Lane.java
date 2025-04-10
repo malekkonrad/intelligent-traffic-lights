@@ -28,4 +28,21 @@ public class Lane{
         vehicles.add(vehicle);
     }
 
+
+    public int getSumWaitingTime(Direction endRoad) {
+        int delay = 0;
+
+        if (!vehicles.isEmpty()) {
+            if (allowedDestinations.contains(endRoad)) {
+                for (Vehicle vehicle : vehicles) {
+                    if (vehicle.getEndRoad().equals(endRoad)) {
+                        delay += vehicle.getDelay();
+                    }
+                }
+            }
+        }
+
+        return delay;
+    }
+
 }
