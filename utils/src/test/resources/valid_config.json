@@ -1,0 +1,14 @@
+{
+  "north": [
+    { "allowedDestinations": ["south", "west", "east"] }
+  ],
+  "south": [
+    { "allowedDestinations": ["north", "west", "east"] }
+  ],
+  "west": [
+    { "allowedDestinations": ["north", "east", "south"] }
+  ],
+  "east": [
+    { "allowedDestinations": ["west", "south", "north"] }
+  ]
+}
