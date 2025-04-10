@@ -105,7 +105,7 @@ public class Intersection {
 
         }
 
-        System.out.print(" leftVehicles: " + leftVehicles.toString() + " \n");
+        System.out.print(" leftVehicles: " + leftVehicles + " \n");
         return leftVehicles;
     }
 

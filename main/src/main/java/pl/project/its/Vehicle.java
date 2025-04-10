@@ -37,4 +37,9 @@ public class Vehicle {
     }
 
 
+    public void incrementDelay() {
+        delay++;
+    }
+
+
 }

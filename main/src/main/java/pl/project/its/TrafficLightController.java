@@ -64,58 +64,45 @@ public class TrafficLightController {
                 ))
 
         );
-//        currentPhaseIndex = selectBestPhase();
+
+        // do przemyślenia
+        Map<DirectionPair, Set<DirectionPair>> conflictMap = Map.of(
+                new DirectionPair(Direction.NORTH, Direction.SOUTH), Set.of(
+                        new DirectionPair(Direction.WEST, Direction.EAST),
+                        new DirectionPair(Direction.EAST, Direction.WEST),
+                        new DirectionPair(Direction.WEST, Direction.NORTH),
+                        new DirectionPair(Direction.EAST, Direction.SOUTH)
+                )
+        );
     }
 
 
     public void nextStep() {
         currentPhaseIndex = selectBestPhase();
 
-
-
-
-
-
-        for (Map.Entry<DirectionPair, Integer> entry : waitingTime.entrySet()){
-
-            // sprawdzam czy któryś DirectionPair czeka za długo
-            if (entry.getValue() >= maxWaitTime){
-
-                // Znajduje fazę która zawiera kierunek zbyt długo czekający
-                for (int i = 0; i < phases.size(); i++){
-                    if (phases.get(i).getAllowedMovements().contains(entry.getKey())){  // entry.getKey() -> DirectionPair
-                        currentPhaseIndex = i;
-                        phaseStepCounter = 0;
-                        return;
+        // po wyborze fazy sprawdzamy, czy nie ma pairów z max delayem
+        for (Map.Entry<Direction, List<Lane>> entry : queues.entrySet()) {
+            for (Lane lane : entry.getValue()) {
+                for (Vehicle vehicle : lane.getVehicles()) {
+                    if (vehicle.getDelay() >= maxWaitTime) {
+                        DirectionPair pair = new DirectionPair(vehicle.getStartRoad(), vehicle.getEndRoad());
+                        // znajdź fazę, która to obsługuje
+                        for (int i = 0; i < phases.size(); i++) {
+                            if (phases.get(i).getAllowedMovements().contains(pair)) {
+                                currentPhaseIndex = i;
+                                phaseStepCounter = 0;
+                                return;
+                            }
+                        }
                     }
                 }
             }
         }
 
 
-        // adaptacyjny wybór fazy
-//        currentPhaseIndex = selectBestPhase();
-        phaseStepCounter = 0;
-//        updateWaitingTimes();
+        phaseStepCounter = 0;   /// nwm po co to????
     }
 
-
-    // adaptacyjne obliczenie długości fazy (im więcej aut, tym dłużej)
-    private int estimatePhaseDuration(TrafficLightPhase phase) {
-//        int totalVehicles = 0;
-//        for (Direction dir : Direction.values()) {
-//            Queue<Vehicle> q = queues.get(dir);
-//            if (q == null || q.isEmpty()) continue;
-//
-//            Vehicle peek = q.peek();
-//            if (peek != null && phase.allows(peek.getStartRoad(), peek.getEndRoad())) {
-//                totalVehicles += q.size();
-//            }
-//        }
-
-//        return Math.max(1, Math.min(1, totalVehicles)); // min. 1 krok, max. 5
-        return 1;
-    }
 
 
     public boolean canPass(Vehicle vehicle) {
@@ -164,11 +151,13 @@ public class TrafficLightController {
             double score = 0.0;
 
             for (DirectionPair pair : phase.getAllowedMovements()) {
-                int count = countVehicles(pair); // ile aut chce jechać w tym kierunku
-                int wait = waitingTime.getOrDefault(pair, 0);
-
-                // większy priorytet dla zatłoczonych i długo czekających
-                score += alpha * count + beta * wait;
+//                int count = countVehicles(pair); // ile aut chce jechać w tym kierunku
+//                int wait = waitingTime.getOrDefault(pair, 0);
+//
+//                // większy priorytet dla zatłoczonych i długo czekających
+//                score += alpha * count + beta * wait;
+                int totalDelay = waitingTime.getOrDefault(pair, 0);
+                score += totalDelay;
             }
 
             if (score > bestScore) {
