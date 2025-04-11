@@ -125,6 +125,21 @@ public class Intersection {
             processVehicles(pair, leftVehicles);
         }
 
+        // Handling conditional green arrows
+        List<ConditionalRule> conditionalRules = List.of(
+                new ConditionalRule(new DirectionPair(Direction.SOUTH, Direction.EAST)),
+                new ConditionalRule(new DirectionPair(Direction.EAST, Direction.NORTH)),
+                new ConditionalRule(new DirectionPair(Direction.NORTH, Direction.WEST)),
+                new ConditionalRule(new DirectionPair(Direction.WEST, Direction.SOUTH))
+        );
+
+        for (ConditionalRule rule : conditionalRules) {
+            if (rule.isAllowed(controller.trafficState, controller.getCurrentPhase(), pedestriansPerDirection)) {
+                processVehicles(rule.getDirectionPair() ,leftVehicles);
+            }
+
+        }
+
 
         // Handling pedestrian crossing intersection
         Set<Direction> allowedCrossings = controller.getCrossingPedestrianDirections();

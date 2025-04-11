@@ -22,7 +22,7 @@ import pl.project.json.structures.output.StepStatusList;
  */
 public class App 
 {
-    static String inputFile = "multilane.json";
+    static String inputFile = "arrow.json";
     static String outputFile = "output.json";
     static String configFile = "multilaneconfig.json";
 

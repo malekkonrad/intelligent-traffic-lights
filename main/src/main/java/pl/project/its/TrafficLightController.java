@@ -27,6 +27,11 @@ public class TrafficLightController {
 
     TrafficState trafficState;
 
+
+    public TrafficLightPhase getCurrentPhase() {
+        return phases.get(currentPhaseIndex);
+    }
+
     public TrafficLightController(Map<Direction, List<Lane>>  queues) {
         this.trafficState = new TrafficState(); /// creation of new object
         this.queues = queues;
@@ -37,6 +42,7 @@ public class TrafficLightController {
                         new DirectionPair(Direction.SOUTH, Direction.NORTH)
                         ),
                         Set.of(Direction.EAST, Direction.WEST)
+
                 ),
 
                 // phase 2:
@@ -45,6 +51,7 @@ public class TrafficLightController {
                         new DirectionPair(Direction.WEST, Direction.EAST)
                         ),
                         Set.of(Direction.NORTH, Direction.SOUTH)
+
                 ),
 
                 // phase 3:
@@ -56,6 +63,7 @@ public class TrafficLightController {
                         new DirectionPair(Direction.WEST, Direction.SOUTH)
                         ),
                         Set.of() // lack of default crossing for pedestrian because directions crosses every possible
+
                 ),
 
                 // phase 4:
@@ -66,6 +74,7 @@ public class TrafficLightController {
                         new DirectionPair(Direction.NORTH, Direction.WEST)
                         ),
                         Set.of() // lack of default crossing for pedestrian because directions crosses every possible
+
                 )
 
         );
@@ -114,13 +123,12 @@ public class TrafficLightController {
     }
 
 
-    // TODO do zmiany jakoś inaczej - może wprowadzić ten TrafficLightPhase????
     public Set<DirectionPair> getGreenDirections(){
         return phases.get(currentPhaseIndex).getAllowedMovements();
     }
 
     public Set<Direction> getCrossingPedestrianDirections(){
-        return phases.get(currentPhaseIndex).getPedestrainCrossings();
+        return phases.get(currentPhaseIndex).getPedestrianCrossings();
     }
 
     public void updateWaitingTimes() {
