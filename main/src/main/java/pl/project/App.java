@@ -21,26 +21,29 @@ import pl.project.json.structures.output.StepStatusList;
  */
 public class App 
 {
-    static String inputFile = "duzo_na_raz.json";
+    static String inputFile = "multilane.json";
     static String outputFile = "output.json";
+    static String configFile = "multilaneconfig.json";
 
 
     public static void main( String... args ) throws Exception {
 
-        // parsing files name
+        // parsing files name - input file and output name
         parseArguments(args);
 
-        Map<Direction, List<Lane>> lanes = JsonReader.loadLanesFromJson("config.json");
+        // reading configuration of intersection - additional feature
+        Map<Direction, List<Lane>> lanes = JsonReader.loadLanesFromJson(configFile);
 
+        // displaying current configuration in console
         showLanesConfig(lanes);
 
-
+        // reading commands from specified file
         CommandList commandList = JsonReader.loadCommandList(inputFile);
 
-
+        // method which handles main logic - performs a simulation
         StepStatusList stepStatusList = mainLogic(commandList, lanes);
 
-        // zapis
+        // saving expected output from simulation to file
         JsonWriter.writeToFile(outputFile ,stepStatusList);
 
     }
