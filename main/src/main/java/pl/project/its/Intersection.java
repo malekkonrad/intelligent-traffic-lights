@@ -114,32 +114,19 @@ public class Intersection {
         // directions from current TrafficLightPhase
         Set<DirectionPair> greenDirections = controller.getGreenDirections();
 
+        // displaying green directions
         for (DirectionPair directionPair : greenDirections) {
             System.out.print(" kierunkek: " + directionPair.toString() + " ");
         }
 
+
+        // Vehicle service on green routes
         for (DirectionPair pair : greenDirections) {
-
-            Direction from = pair.getStartRoad();
-            Direction to = pair.getEndRoad();
-
-            // pasy skąd jadę
-            List<Lane> lanes = lanesPerDirection.get(from);
-
-            for (Lane lane : lanes) {
-                if (lane.getAllowedDestinations().contains(to)) {
-
-                    Queue<Vehicle> queue = lane.getVehicles();
-                    // może być taki przypadek że z danego pasa można jechać w dwóch lub więcej kierunkach
-                    // dlatego musi być druga część warunku
-                    if (!queue.isEmpty() && queue.peek().getEndRoad() == to) {
-                        Vehicle vehicle = queue.poll();
-                        leftVehicles.add(vehicle.getId());
-                    }
-                }
-            }
+            processVehicles(pair, leftVehicles);
         }
 
+
+        // Handling pedestrian crossing intersection
         Set<Direction> allowedCrossings = controller.getCrossingPedestrianDirections();
         if (!allowedCrossings.isEmpty()) {
             for (Direction direction : allowedCrossings) {
@@ -157,6 +144,26 @@ public class Intersection {
 
         System.out.print(" leftVehicles: " + leftVehicles + " " + leftPedestrians + "\n");
         return stepStatus;
+    }
+
+
+
+    private void processVehicles(DirectionPair pair, List<String> leftVehicles) {
+        Direction from = pair.getStartRoad();
+        Direction to = pair.getEndRoad();
+        List<Lane> lanes = lanesPerDirection.get(from);
+
+        for (Lane lane : lanes) {
+            if (lane.getAllowedDestinations().contains(to)) {
+                Queue<Vehicle> queue = lane.getVehicles();
+
+                // check if vehicle can pass
+                if (!queue.isEmpty() && queue.peek().getEndRoad() == to) {
+                    Vehicle vehicle = queue.poll();
+                    leftVehicles.add(vehicle.getId());
+                }
+            }
+        }
     }
 
 }
