@@ -24,7 +24,7 @@ public class App
 {
     static String inputFile = "arrow.json";
     static String outputFile = "output.json";
-    static String configFile = "multilaneconfig.json";
+    static String configFile = "config.json";
 
 
     public static void main( String... args ) throws Exception {

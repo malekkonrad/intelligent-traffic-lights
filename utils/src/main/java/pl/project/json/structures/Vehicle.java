@@ -20,6 +20,10 @@ public class Vehicle {
     @Setter
     Direction endRoad;
 
+    @Getter
+    @Setter
+    boolean isBlocked = false;
+
     Map<String, Direction> converter = Map.of(
             "north", Direction.NORTH,
             "south", Direction.SOUTH,

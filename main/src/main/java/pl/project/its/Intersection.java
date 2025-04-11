@@ -154,6 +154,22 @@ public class Intersection {
         }
 
 
+
+
+
+        for (Direction direction : Direction.values()) {
+            for (Lane lane : lanesPerDirection.get(direction)) {
+                Queue<Vehicle> queue = lane.getVehicles();
+                if (!queue.isEmpty() && queue.peek().isBlocked()){
+                    Vehicle vehicle = queue.poll();
+                    leftVehicles.add(vehicle.getId());
+                }
+            }
+        }
+
+
+
+
         StepStatus stepStatus = new StepStatus(leftVehicles, leftPedestrians);
 
 
@@ -173,9 +189,11 @@ public class Intersection {
                 Queue<Vehicle> queue = lane.getVehicles();
 
                 // check if vehicle can pass
-                if (!queue.isEmpty() && queue.peek().getEndRoad() == to) {
-                    Vehicle vehicle = queue.poll();
-                    leftVehicles.add(vehicle.getId());
+                if (!queue.isEmpty() && queue.peek().getEndRoad() == to && !queue.peek().isBlocked()) { // and vehicle is not blocked!
+                    // blokuje pojazd zamiast go usuwać!
+                    queue.peek().setBlocked(true);
+//                    Vehicle vehicle = queue.poll();
+//                    leftVehicles.add(vehicle.getId());
                 }
             }
         }
