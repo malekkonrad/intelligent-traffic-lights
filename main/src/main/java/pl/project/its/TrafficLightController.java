@@ -17,16 +17,18 @@ public class TrafficLightController {
      * Important to remember is that we are considering DirectionPair not Lanes because there can be multiple lanes in
      * specific DirectionPair (from -> to)
      */
-    private final Map<DirectionPair, Integer> waitingVehicles = new HashMap<>();
-    private final Map<DirectionPair, Integer> waitingTime = new HashMap<>();
+//    private final Map<DirectionPair, Integer> waitingVehicles = new HashMap<>();
+//    private final Map<DirectionPair, Integer> waitingTime = new HashMap<>();
     private final int maxWaitTime = 5; // maksymalna liczba kroków oczekiwania
     private final double alpha = 1.0; // waga natężenia
     private final double beta = 0.5; // waga czasu oczekiwania
 
-
     private final Map<Direction, List<Lane>>  queues;
 
+    TrafficState trafficState;
+
     public TrafficLightController(Map<Direction, List<Lane>>  queues) {
+        this.trafficState = new TrafficState(); /// creation of new object
         this.queues = queues;
         phases = List.of(
                 // phase 1:
@@ -123,39 +125,7 @@ public class TrafficLightController {
 
     public void updateWaitingTimes() {
 
-        waitingTime.clear();
-        waitingVehicles.clear();
-
-        for (Map.Entry<Direction, List<Lane>> entry : queues.entrySet()){
-            Direction from = entry.getKey();
-
-
-            // aktualizuje czas oczekiwania
-            for (Lane lane : entry.getValue()){
-                for (Vehicle vehicle : lane.getVehicles()){
-                    vehicle.setDelay(vehicle.getDelay() + 1);       // TODO dodać dedykowaną metodę
-                }
-
-
-                for (Direction direction: lane.getAllowedDestinations()){
-                    DirectionPair directionPair = new DirectionPair(from , direction);
-                    if (waitingTime.containsKey(directionPair)){
-                        waitingTime.put(directionPair, waitingTime.get(directionPair) + lane.getSumWaitingTime(direction));
-                    }
-                    else{
-                        waitingTime.put(directionPair, lane.getSumWaitingTime(direction));
-                    }
-
-
-                    if (waitingVehicles.containsKey(directionPair)){
-                        waitingVehicles.put(directionPair, waitingVehicles.get(directionPair) + lane.size(direction));
-                    }
-                    else{
-                        waitingVehicles.put(directionPair, lane.size(direction));
-                    }
-                }
-            }
-        }
+        trafficState.updateWaitingTimes(queues);
 
     }
 
@@ -173,7 +143,7 @@ public class TrafficLightController {
 //
 //                // większy priorytet dla zatłoczonych i długo czekających
 //                score += alpha * count + beta * wait;
-                int totalDelay = waitingTime.getOrDefault(pair, 0);
+                int totalDelay = trafficState.getTotalWaitingTime(pair);    // waitingTime.getOrDefault(pair, 0);
                 score += totalDelay;
             }
 
@@ -223,13 +193,13 @@ public class TrafficLightController {
             }
         }
 
-
-        for (DirectionPair directionPair : waitingVehicles.keySet()) {
+//        trafficState.getWaitingVehicles().keySet()
+        for (DirectionPair directionPair : trafficState.getWaitingVehicles().keySet()) {
             assert myPhase != null;
             if (myPhase.getAllowedMovements().contains(directionPair)) {
-                vehiclesCount += waitingVehicles.get(directionPair);
+                vehiclesCount += trafficState.getWaitingVehicles().get(directionPair);      // waitingVehicles.get(directionPair);
             }
-            allVehiclesCount += waitingVehicles.get(directionPair);
+            allVehiclesCount += trafficState.getWaitingVehicles().get(directionPair); // waitingVehicles.get(directionPair);
         }
 
 //        System.out.println(allVehiclesCount + " " + vehiclesCount);
