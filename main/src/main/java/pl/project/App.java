@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import pl.project.its.Intersection;
+import pl.project.its.pedestrian.Pedestrian;
 import pl.project.json.structures.Lane;
 import pl.project.json.structures.Vehicle;
 import pl.project.json.structures.Direction;
@@ -11,6 +12,7 @@ import pl.project.json.JsonReader;
 import pl.project.json.JsonWriter;
 import pl.project.json.structures.input.Command;
 import pl.project.json.structures.input.CommandList;
+import pl.project.json.structures.output.StepStatus;
 import pl.project.json.structures.output.StepStatusList;
 
 
@@ -20,7 +22,7 @@ import pl.project.json.structures.output.StepStatusList;
  */
 public class App 
 {
-    static String inputFile = "duzo_na_raz.json";
+    static String inputFile = "multilane.json";
     static String outputFile = "output.json";
     static String configFile = "multilaneconfig.json";
 
@@ -85,11 +87,14 @@ public class App
             if ("addVehicle".equals(cmd.getType())) {
                 System.out.print(" directions: " + cmd.getStartRoad() + " " + cmd.getEndRoad() + "\n");
                 intersection.addVehicle(new Vehicle(cmd.getVehicleId(),0, cmd.getStartRoad(), cmd.getEndRoad()));
-            }else{
-                List<String> leftVehicle = intersection.step();
+            } else if ("addPedestrian".equals(cmd.getType())) {
+                System.out.print(" crossing: " + cmd.getCrossingDirection() + "\n");
+                intersection.addPedestrian(new Pedestrian(cmd.getVehicleId(), cmd.getCrossingDirection()));
+            } else{
+                StepStatus stepStatus = intersection.step();
 
                 // add step to list that will be saved into json
-                stepStatusList.addStep(leftVehicle);
+                stepStatusList.addStep(stepStatus);
             }
         }
         return stepStatusList;

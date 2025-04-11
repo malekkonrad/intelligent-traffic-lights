@@ -2,6 +2,7 @@ package pl.project.json;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import pl.project.json.structures.output.StepStatus;
 import pl.project.json.structures.output.StepStatusList;
 
 import java.io.File;
@@ -29,8 +30,10 @@ class JsonWriterTest {
     void testWriteToFile_createsJsonFileWithCorrectContent() throws IOException {
         // given
         StepStatusList stepStatusList = new StepStatusList();
-        stepStatusList.addStep(List.of("vehicle1", "vehicle2"));
-        stepStatusList.addStep(List.of("vehicle3"));
+        StepStatus stepStatus1 = new StepStatus(List.of("vehicle1", "vehicle2"), List.of("pedestrian1", "pedestrian2"));
+        stepStatusList.addStep(stepStatus1);
+        StepStatus stepStatus2 = new StepStatus(List.of("vehicle3"), List.of( "pedestrian3"));
+        stepStatusList.addStep(stepStatus2);
 
         // when
         JsonWriter.writeToFile(TEST_FILE_PATH, stepStatusList);
@@ -49,7 +52,8 @@ class JsonWriterTest {
         // given
         String invalidPath = "/invalid_path/test_output.json";
         StepStatusList stepStatusList = new StepStatusList();
-        stepStatusList.addStep(List.of("vehicle1"));
+        StepStatus stepStatus1 = new StepStatus(List.of("vehicle1"), List.of());
+        stepStatusList.addStep(stepStatus1);
 
         // when & then
         assertThrows(IOException.class, () -> JsonWriter.writeToFile(invalidPath, stepStatusList));

@@ -10,4 +10,5 @@ public class Command {
     private String vehicleId;
     private String startRoad;
     private String endRoad;
+    private String crossingDirection;
 }

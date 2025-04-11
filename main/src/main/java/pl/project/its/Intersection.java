@@ -1,9 +1,11 @@
 package pl.project.its;
 
+import pl.project.its.pedestrian.Pedestrian;
 import pl.project.json.structures.Direction;
 import pl.project.its.directions.DirectionPair;
 import pl.project.json.structures.Lane;
 import pl.project.json.structures.Vehicle;
+import pl.project.json.structures.output.StepStatus;
 
 import java.util.*;
 
@@ -20,7 +22,10 @@ public class Intersection {
     //                                Map<Destination (type Direction), Queue<Vehicle>
 
 
-    private Map<Direction, List<Lane>> lanesPerDirection = new EnumMap<>(Direction.class);
+    private final Map<Direction, List<Lane>> lanesPerDirection;
+
+
+    private final Map<Direction, Queue<Pedestrian>> pedestriansPerDirection = new EnumMap<>(Direction.class);
 
     private final TrafficLightController controller;
 
@@ -30,11 +35,20 @@ public class Intersection {
     public Intersection(Map<Direction, List<Lane>> lanesPerDirection) {
         this.lanesPerDirection = lanesPerDirection;
         controller = new TrafficLightController(lanesPerDirection);
+
+
+        for (Direction direction : Direction.values()) {
+            pedestriansPerDirection.put(direction, new LinkedList<>());
+        }
     }
 
 
-
-
+    /**
+     * Adds vehicles to the lane that leads from defined startRoad to endRoad directions.
+     * If there is more than one lane that allows to vehicle to drive in a given direction,
+     * will assign vehicle to the lane with the lowest number of cars in front of it
+     * @param vehicle -
+     */
     public void addVehicle(Vehicle vehicle) {
         Direction start = vehicle.getStartRoad();
         Direction end = vehicle.getEndRoad();
@@ -47,23 +61,14 @@ public class Intersection {
         }
 
 
-        // w przyszłości można to rozbudować o dodawanie tam gdzie jest najmniej pojazdów
-        // albo losowo - wsm fajna opcja
-
         Map<Lane, Integer> allowedLanes = new HashMap<>();
-//        List<Lane> allowedLanes = new ArrayList<>();
-
         for (Lane lane : lanes) {
-
-            // TODO do zmiany! - partially done
             if (lane.allows(end)) {
                 allowedLanes.put(lane, lane.getVehicles().size());
                 System.out.println("\t" + lane + " " + lane.getVehicles().size());
-//                allowedLanes.add(lane);
-//                lane.addVehicle(vehicle);
-//                return;
             }
         }
+
         Lane bestLane = null;
         if (!allowedLanes.isEmpty()) {
             int bestScore = Integer.MAX_VALUE;
@@ -84,17 +89,28 @@ public class Intersection {
 
 
     /**
+     * Simple logic
+     * @param pedestrian =
+     */
+    public void addPedestrian(Pedestrian pedestrian) {
+        pedestriansPerDirection.get(pedestrian.getCrossingDirection()).add(pedestrian);
+    }
+
+
+    /**
      * Main method to execute step in simulation.
      * returns: leftVehicles
      */
-    public List<String> step() {
+    public StepStatus step() {
         List<String> leftVehicles = new ArrayList<>();
+        List<String> leftPedestrians = new ArrayList<>();
 
         // Update waiting times - some vehicles left the intersection so we need to keep that in mind
         controller.updateWaitingTimes();
 
 
         controller.nextStep();
+
         // directions from current TrafficLightPhase
         Set<DirectionPair> greenDirections = controller.getGreenDirections();
 
@@ -119,16 +135,28 @@ public class Intersection {
                     if (!queue.isEmpty() && queue.peek().getEndRoad() == to) {
                         Vehicle vehicle = queue.poll();
                         leftVehicles.add(vehicle.getId());
-//                        break;
                     }
                 }
             }
-
-
         }
 
-        System.out.print(" leftVehicles: " + leftVehicles + " \n");
-        return leftVehicles;
+        Set<Direction> allowedCrossings = controller.getCrossingPedestrianDirections();
+        if (!allowedCrossings.isEmpty()) {
+            for (Direction direction : allowedCrossings) {
+                Queue<Pedestrian> queue = pedestriansPerDirection.get(direction);
+                if (!queue.isEmpty()) {
+                    Pedestrian pedestrian = queue.poll();
+                    leftPedestrians.add(pedestrian.getId());
+                }
+            }
+        }
+
+
+        StepStatus stepStatus = new StepStatus(leftVehicles, leftPedestrians);
+
+
+        System.out.print(" leftVehicles: " + leftVehicles + " " + leftPedestrians + "\n");
+        return stepStatus;
     }
 
 }

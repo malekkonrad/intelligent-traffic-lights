@@ -32,22 +32,18 @@ public class TrafficLightController {
                 // phase 1:
                 new TrafficLightPhase(Set.of(
                         new DirectionPair(Direction.NORTH, Direction.SOUTH),
-                        new DirectionPair(Direction.SOUTH, Direction.NORTH),
-
-                        // ability to turn right from north/south
-                        new DirectionPair(Direction.SOUTH, Direction.EAST),
-                        new DirectionPair(Direction.NORTH, Direction.WEST)
-                )),
+                        new DirectionPair(Direction.SOUTH, Direction.NORTH)
+                        ),
+                        Set.of(Direction.EAST, Direction.WEST)
+                ),
 
                 // phase 2:
                 new TrafficLightPhase(Set.of(
                         new DirectionPair(Direction.EAST, Direction.WEST),
-                        new DirectionPair(Direction.WEST, Direction.EAST),
-
-                        // ability to turn right from east/west
-                        new DirectionPair(Direction.EAST, Direction.NORTH),
-                        new DirectionPair(Direction.WEST, Direction.SOUTH)
-                )),
+                        new DirectionPair(Direction.WEST, Direction.EAST)
+                        ),
+                        Set.of(Direction.NORTH, Direction.SOUTH)
+                ),
 
                 // phase 3:
                 new TrafficLightPhase(Set.of(
@@ -56,7 +52,9 @@ public class TrafficLightController {
 
                         new DirectionPair(Direction.EAST, Direction.NORTH),
                         new DirectionPair(Direction.WEST, Direction.SOUTH)
-                )),
+                        ),
+                        Set.of() // lack of default crossing for pedestrian because directions crosses every possible
+                ),
 
                 // phase 4:
                 new TrafficLightPhase(Set.of(
@@ -64,19 +62,13 @@ public class TrafficLightController {
                         new DirectionPair(Direction.WEST, Direction.NORTH),
                         new DirectionPair(Direction.SOUTH, Direction.EAST),
                         new DirectionPair(Direction.NORTH, Direction.WEST)
-                ))
+                        ),
+                        Set.of() // lack of default crossing for pedestrian because directions crosses every possible
+                )
 
         );
 
-        // do przemyślenia
-//        Map<DirectionPair, Set<DirectionPair>> conflictMap = Map.of(
-//                new DirectionPair(Direction.NORTH, Direction.SOUTH), Set.of(
-//                        new DirectionPair(Direction.WEST, Direction.EAST),
-//                        new DirectionPair(Direction.EAST, Direction.WEST),
-//                        new DirectionPair(Direction.WEST, Direction.NORTH),
-//                        new DirectionPair(Direction.EAST, Direction.SOUTH)
-//                )
-//        );
+
     }
 
 
@@ -87,6 +79,7 @@ public class TrafficLightController {
         for (Map.Entry<Direction, List<Lane>> entry : queues.entrySet()) {
             for (Lane lane : entry.getValue()) {
                 // TODO tutaj w teori nie musiałoby być pęli bo powinniśmy sprawdzać tylko pierwszego auta - reszta nie może mieć większej oczekiwania!
+                // co z czekaniem na innych pasach???
                 for (Vehicle vehicle : lane.getVehicles()) {
 
                     // TODO tutuj będzie zmieniany delay -> lepiej chyba jak on
@@ -124,7 +117,9 @@ public class TrafficLightController {
         return phases.get(currentPhaseIndex).getAllowedMovements();
     }
 
-
+    public Set<Direction> getCrossingPedestrianDirections(){
+        return phases.get(currentPhaseIndex).getPedestrainCrossings();
+    }
 
     public void updateWaitingTimes() {
 

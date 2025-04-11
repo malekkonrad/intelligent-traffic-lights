@@ -14,8 +14,6 @@ import java.util.List;
 public class StepStatus {
 
     private List<String> leftVehicles;
+    private List<String> leftPedestrians;
 
-    public boolean equals(StepStatus stepStatus) {
-        return leftVehicles.equals(stepStatus.leftVehicles);
-    }
 }

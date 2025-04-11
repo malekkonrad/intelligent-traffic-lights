@@ -15,14 +15,8 @@ import java.util.List;
 public class StepStatusList {
     private List<StepStatus> stepStatuses = new ArrayList<StepStatus>();
 
-    public void addStep(List<String> stepsStatusString ) {
-
-        StepStatus stepStatus = new StepStatus(stepsStatusString);
+    public void addStep(StepStatus stepStatus) {
         this.stepStatuses.add(stepStatus);
-    }
-
-    public boolean equals(StepStatusList stepStatusList) {
-        return this.stepStatuses.equals(stepStatusList.stepStatuses);
     }
 
 }
