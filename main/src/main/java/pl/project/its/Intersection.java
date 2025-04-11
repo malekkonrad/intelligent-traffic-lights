@@ -49,13 +49,33 @@ public class Intersection {
 
         // w przyszłości można to rozbudować o dodawanie tam gdzie jest najmniej pojazdów
         // albo losowo - wsm fajna opcja
+
+        Map<Lane, Integer> allowedLanes = new HashMap<>();
+//        List<Lane> allowedLanes = new ArrayList<>();
+
         for (Lane lane : lanes) {
 
-            // TODO do zmiany!
+            // TODO do zmiany! - partially done
             if (lane.allows(end)) {
-                lane.addVehicle(vehicle);
-                return;
+                allowedLanes.put(lane, lane.getVehicles().size());
+                System.out.println("\t" + lane + " " + lane.getVehicles().size());
+//                allowedLanes.add(lane);
+//                lane.addVehicle(vehicle);
+//                return;
             }
+        }
+        Lane bestLane = null;
+        if (!allowedLanes.isEmpty()) {
+            int bestScore = Integer.MAX_VALUE;
+            for(Map.Entry<Lane, Integer> entry : allowedLanes.entrySet()) {
+                if (entry.getValue() < bestScore) {
+                    bestScore = entry.getValue();
+                    bestLane = entry.getKey();
+                }
+            }
+            assert bestLane != null;
+            bestLane.addVehicle(vehicle);
+            return;
         }
 
         throw new IllegalStateException("No available lane from " + start + " to " + end);
@@ -99,7 +119,7 @@ public class Intersection {
                     if (!queue.isEmpty() && queue.peek().getEndRoad() == to) {
                         Vehicle vehicle = queue.poll();
                         leftVehicles.add(vehicle.getId());
-                        break;
+//                        break;
                     }
                 }
             }

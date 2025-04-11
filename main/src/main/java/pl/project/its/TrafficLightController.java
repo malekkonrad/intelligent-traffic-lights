@@ -144,8 +144,20 @@ public class TrafficLightController {
 
                 for (Direction direction: lane.getAllowedDestinations()){
                     DirectionPair directionPair = new DirectionPair(from , direction);
-                    waitingTime.put(directionPair, lane.getSumWaitingTime(direction));
-                    waitingVehicles.put(directionPair, lane.size(direction));
+                    if (waitingTime.containsKey(directionPair)){
+                        waitingTime.put(directionPair, waitingTime.get(directionPair) + lane.getSumWaitingTime(direction));
+                    }
+                    else{
+                        waitingTime.put(directionPair, lane.getSumWaitingTime(direction));
+                    }
+
+
+                    if (waitingVehicles.containsKey(directionPair)){
+                        waitingVehicles.put(directionPair, waitingVehicles.get(directionPair) + lane.size(direction));
+                    }
+                    else{
+                        waitingVehicles.put(directionPair, lane.size(direction));
+                    }
                 }
             }
         }
@@ -225,7 +237,7 @@ public class TrafficLightController {
             allVehiclesCount += waitingVehicles.get(directionPair);
         }
 
-        System.out.println(allVehiclesCount + " " + vehiclesCount);
+//        System.out.println(allVehiclesCount + " " + vehiclesCount);
 //
 //
 //        DirectionPair pair = new DirectionPair(vehicle.getStartRoad(), vehicle.getEndRoad());

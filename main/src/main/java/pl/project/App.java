@@ -11,7 +11,6 @@ import pl.project.json.JsonReader;
 import pl.project.json.JsonWriter;
 import pl.project.json.structures.input.Command;
 import pl.project.json.structures.input.CommandList;
-import pl.project.json.structures.output.StepStatus;
 import pl.project.json.structures.output.StepStatusList;
 
 
@@ -21,7 +20,7 @@ import pl.project.json.structures.output.StepStatusList;
  */
 public class App 
 {
-    static String inputFile = "multilane.json";
+    static String inputFile = "duzo_na_raz.json";
     static String outputFile = "output.json";
     static String configFile = "multilaneconfig.json";
 
