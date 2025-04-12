@@ -12,7 +12,7 @@ public class Vehicle {
     String id;
 
     @Setter
-    int delay = 0;
+    int delay;
 
     @Setter
     Direction startRoad;
@@ -22,7 +22,7 @@ public class Vehicle {
 
     @Getter
     @Setter
-    boolean isBlocked = false;
+    private boolean isBlocked = false;
 
     Map<String, Direction> converter = Map.of(
             "north", Direction.NORTH,
@@ -31,16 +31,21 @@ public class Vehicle {
             "east", Direction.EAST
     );
 
-    public Vehicle(String id, int delay, String startRoad, String endRoad) {
+    public Vehicle(String id, String startRoad, String endRoad) {
         this.id = id;
-        this.delay = delay;
+        this.delay = 0;
         this.startRoad = converter.get(startRoad);
         this.endRoad = converter.get(endRoad);
     }
 
 
     public void incrementDelay() {
-        delay++;
+        if (delay > 5){
+            delay *= 2;
+        }
+        else{
+            delay++;
+        }
     }
 
 

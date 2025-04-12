@@ -2,7 +2,6 @@ package pl.project.json.structures;
 
 import lombok.Getter;
 import lombok.Setter;
-import pl.project.json.structures.Vehicle;
 
 import java.util.*;
 

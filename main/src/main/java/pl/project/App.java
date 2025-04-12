@@ -22,9 +22,9 @@ import pl.project.json.structures.output.StepStatusList;
  */
 public class App 
 {
-    static String inputFile = "arrow.json";
+    static String inputFile = "commands/blocked.json";
     static String outputFile = "output.json";
-    static String configFile = "config.json";
+    static String configFile = "config/config.json";
 
 
     public static void main( String... args ) throws Exception {
@@ -50,7 +50,7 @@ public class App
     }
 
 
-    public static void parseArguments(String... args) throws Exception {
+    public static void parseArguments(String... args)  {
         // parsing files name
         try{
 
@@ -74,19 +74,17 @@ public class App
     }
 
 
-    public static StepStatusList mainLogic(CommandList commandList, Map<Direction, List<Lane>> lanes) throws Exception {
+    public static StepStatusList mainLogic(CommandList commandList, Map<Direction, List<Lane>> lanes)  {
 
         Intersection intersection = new Intersection(lanes);
 
-        // Obiekt w którym będę zapisywał statusy
         StepStatusList stepStatusList = new StepStatusList();
 
-        // Przejście po komendach
         for (Command cmd : commandList.getCommands()) {
             System.out.print("Type: " + cmd.getType());
             if ("addVehicle".equals(cmd.getType())) {
                 System.out.print(" directions: " + cmd.getStartRoad() + " " + cmd.getEndRoad() + "\n");
-                intersection.addVehicle(new Vehicle(cmd.getVehicleId(),0, cmd.getStartRoad(), cmd.getEndRoad()));
+                intersection.addVehicle(new Vehicle(cmd.getVehicleId(), cmd.getStartRoad(), cmd.getEndRoad()));
             } else if ("addPedestrian".equals(cmd.getType())) {
                 System.out.print(" crossing: " + cmd.getCrossingDirection() + "\n");
                 intersection.addPedestrian(new Pedestrian(cmd.getVehicleId(), cmd.getCrossingDirection()));

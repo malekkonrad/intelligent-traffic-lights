@@ -27,6 +27,6 @@ public class DirectionPair {
 
     @Override
     public String toString() {
-        return startRoad + " " + endRoad;
+        return startRoad + "->" + endRoad;
     }
 }

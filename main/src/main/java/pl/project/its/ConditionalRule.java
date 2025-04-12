@@ -18,7 +18,7 @@ public class ConditionalRule {
 
     public boolean isAllowed(TrafficState trafficState, TrafficLightPhase currentPhase, Map<Direction, Queue<Pedestrian>> pedestriansPerDirection) {
 
-        // sprawdzić czy jakieś auta jadą w kierunku docelowym
+        // check if any cars are going to the destination
         Set<DirectionPair> activeMovements =  currentPhase.getAllowedMovements();
 
         for (DirectionPair directionPair_: activeMovements){
@@ -27,18 +27,13 @@ public class ConditionalRule {
             }
         }
 
-        // sprawdzić czy przejście dla pieszych SOUTH jest nieaktywne w tej fazie lub nikt przez nie nie przechodzi tak samo z EAST przejściem
+        // crossings
         Set<Direction> crossings = currentPhase.getPedestrianCrossings();
         if (crossings.contains(directionPair.getStartRoad()) && !pedestriansPerDirection.get(directionPair.getStartRoad()).isEmpty()) {
             return false;
         }
 
-        if (crossings.contains(directionPair.getEndRoad()) && !pedestriansPerDirection.get(directionPair.getEndRoad()).isEmpty()) {
-            return false;
-        }
-
-        // wtedy może przejechać
-        return true;
+        return !crossings.contains(directionPair.getEndRoad()) || pedestriansPerDirection.get(directionPair.getEndRoad()).isEmpty();
     }
 
 }

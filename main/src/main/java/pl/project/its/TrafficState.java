@@ -1,13 +1,11 @@
 package pl.project.its;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import pl.project.its.directions.DirectionPair;
 import pl.project.json.structures.Direction;
 import pl.project.json.structures.Lane;
 import pl.project.json.structures.Vehicle;
 
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +17,9 @@ public class TrafficState {
     private final Map<DirectionPair, Integer> waitingVehicles = new HashMap<>();
     private final Map<DirectionPair, Integer> waitingTime = new HashMap<>();
 
-
+    /**
+     * Updates waiting times for every DirectionPair.
+     */
     public void updateWaitingTimes(Map<Direction, List<Lane>> lanesPerDirection) {
 
         waitingTime.clear();
@@ -34,11 +34,9 @@ public class TrafficState {
                     vehicle.incrementDelay();
                 }
 
-
                 for (Direction to: lane.getAllowedDestinations()){
 
                     DirectionPair pair = new DirectionPair(from , to);
-
                     int vehicleCount = lane.size(to);
                     int totalDelay = lane.getSumWaitingTime(to);
 
@@ -58,7 +56,6 @@ public class TrafficState {
     public int getTotalWaitingTime(DirectionPair pair) {
         return waitingTime.getOrDefault(pair, 0);
     }
-
 
 
 }

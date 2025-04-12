@@ -15,31 +15,28 @@ import java.util.*;
 public class Intersection {
 
 
-    // Change Direction -> DirectionPair - it enables to
-    // queues ->
-    //          Direction : List<Lane> (eventually new Lanes)
-    //                      Lane ->
-    //                                Map<Destination (type Direction), Queue<Vehicle>
-
-
     private final Map<Direction, List<Lane>> lanesPerDirection;
-
-
     private final Map<Direction, Queue<Pedestrian>> pedestriansPerDirection = new EnumMap<>(Direction.class);
-
     private final TrafficLightController controller;
 
+    // defined rules for conditional green light
+    private final List<ConditionalRule> conditionalRules = List.of(
+            new ConditionalRule(new DirectionPair(Direction.SOUTH, Direction.EAST)),
+            new ConditionalRule(new DirectionPair(Direction.EAST, Direction.NORTH)),
+            new ConditionalRule(new DirectionPair(Direction.NORTH, Direction.WEST)),
+            new ConditionalRule(new DirectionPair(Direction.WEST, Direction.SOUTH))
+    );
 
 
 
     public Intersection(Map<Direction, List<Lane>> lanesPerDirection) {
         this.lanesPerDirection = lanesPerDirection;
-        controller = new TrafficLightController(lanesPerDirection);
-
 
         for (Direction direction : Direction.values()) {
             pedestriansPerDirection.put(direction, new LinkedList<>());
         }
+
+        controller = new TrafficLightController(lanesPerDirection, pedestriansPerDirection);
     }
 
 
@@ -55,17 +52,14 @@ public class Intersection {
 
         List<Lane> lanes = this.lanesPerDirection.get(start);
 
-        // TODO dodać własny wyjątek!
         if (lanes == null) {
             throw new IllegalArgumentException("No lanes for direction: " + start);
         }
-
 
         Map<Lane, Integer> allowedLanes = new HashMap<>();
         for (Lane lane : lanes) {
             if (lane.allows(end)) {
                 allowedLanes.put(lane, lane.getVehicles().size());
-                System.out.println("\t" + lane + " " + lane.getVehicles().size());
             }
         }
 
@@ -105,42 +99,72 @@ public class Intersection {
         List<String> leftVehicles = new ArrayList<>();
         List<String> leftPedestrians = new ArrayList<>();
 
-        // Update waiting times - some vehicles left the intersection so we need to keep that in mind
-        controller.updateWaitingTimes();
-
-
+        // computing the best phase to handle traffic at intersection
         controller.nextStep();
 
         // directions from current TrafficLightPhase
         Set<DirectionPair> greenDirections = controller.getGreenDirections();
 
         // displaying green directions
+        System.out.print(" \tdirections:");
         for (DirectionPair directionPair : greenDirections) {
-            System.out.print(" kierunkek: " + directionPair.toString() + " ");
+            System.out.print(" " + directionPair.toString() + " ");
         }
 
 
+        processVehiclesOnGreen(greenDirections);
+
+        processVehiclesOnConditional();
+
+        processPedestrians(leftPedestrians);
+
+
+        // before vehicles are only blocked and only here deleted from intersection
+        deleteVehicles(leftVehicles);
+
+
+        StepStatus stepStatus = new StepStatus(leftVehicles, leftPedestrians);
+
+        System.out.print(" leftVehicles: " + leftVehicles + " \tleftPedestrians: " + leftPedestrians + "\n");
+
+        return stepStatus;
+    }
+
+
+
+    private void processVehiclesOnGreen(Set<DirectionPair> greenDirections) {
         // Vehicle service on green routes
         for (DirectionPair pair : greenDirections) {
-            processVehicles(pair, leftVehicles);
+            processVehicles(pair);
         }
+    }
 
+
+    private void processVehiclesOnConditional() {
         // Handling conditional green arrows
-        List<ConditionalRule> conditionalRules = List.of(
-                new ConditionalRule(new DirectionPair(Direction.SOUTH, Direction.EAST)),
-                new ConditionalRule(new DirectionPair(Direction.EAST, Direction.NORTH)),
-                new ConditionalRule(new DirectionPair(Direction.NORTH, Direction.WEST)),
-                new ConditionalRule(new DirectionPair(Direction.WEST, Direction.SOUTH))
-        );
-
         for (ConditionalRule rule : conditionalRules) {
             if (rule.isAllowed(controller.trafficState, controller.getCurrentPhase(), pedestriansPerDirection)) {
-                processVehicles(rule.getDirectionPair() ,leftVehicles);
+                processVehicles(rule.getDirectionPair());
             }
 
         }
+    }
 
 
+    private void deleteVehicles(List<String> leftVehicles){
+        for (Direction direction : Direction.values()) {
+            for (Lane lane : lanesPerDirection.get(direction)) {
+                Queue<Vehicle> queue = lane.getVehicles();
+                if (!queue.isEmpty() && queue.peek().isBlocked()){
+                    Vehicle vehicle = queue.poll();
+                    leftVehicles.add(vehicle.getId());
+                }
+            }
+        }
+    }
+
+
+    private void processPedestrians(List<String> leftPedestrians){
         // Handling pedestrian crossing intersection
         Set<Direction> allowedCrossings = controller.getCrossingPedestrianDirections();
         if (!allowedCrossings.isEmpty()) {
@@ -152,34 +176,10 @@ public class Intersection {
                 }
             }
         }
-
-
-
-
-
-        for (Direction direction : Direction.values()) {
-            for (Lane lane : lanesPerDirection.get(direction)) {
-                Queue<Vehicle> queue = lane.getVehicles();
-                if (!queue.isEmpty() && queue.peek().isBlocked()){
-                    Vehicle vehicle = queue.poll();
-                    leftVehicles.add(vehicle.getId());
-                }
-            }
-        }
-
-
-
-
-        StepStatus stepStatus = new StepStatus(leftVehicles, leftPedestrians);
-
-
-        System.out.print(" leftVehicles: " + leftVehicles + " " + leftPedestrians + "\n");
-        return stepStatus;
     }
 
 
-
-    private void processVehicles(DirectionPair pair, List<String> leftVehicles) {
+    private void processVehicles(DirectionPair pair) {
         Direction from = pair.getStartRoad();
         Direction to = pair.getEndRoad();
         List<Lane> lanes = lanesPerDirection.get(from);
@@ -187,13 +187,9 @@ public class Intersection {
         for (Lane lane : lanes) {
             if (lane.getAllowedDestinations().contains(to)) {
                 Queue<Vehicle> queue = lane.getVehicles();
-
                 // check if vehicle can pass
-                if (!queue.isEmpty() && queue.peek().getEndRoad() == to && !queue.peek().isBlocked()) { // and vehicle is not blocked!
-                    // blokuje pojazd zamiast go usuwać!
+                if (!queue.isEmpty() && queue.peek().getEndRoad() == to && !queue.peek().isBlocked()) {
                     queue.peek().setBlocked(true);
-//                    Vehicle vehicle = queue.poll();
-//                    leftVehicles.add(vehicle.getId());
                 }
             }
         }

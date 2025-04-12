@@ -14,7 +14,4 @@ public class TrafficLightPhase {
     private final Set<DirectionPair> allowedMovements;
     private final Set<Direction> pedestrianCrossings;
 
-    public boolean allows(Direction start, Direction end) {
-        return allowedMovements.contains(new DirectionPair(start, end));
-    }
 }

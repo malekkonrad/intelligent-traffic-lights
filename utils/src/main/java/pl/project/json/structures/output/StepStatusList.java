@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StepStatusList {
-    private List<StepStatus> stepStatuses = new ArrayList<StepStatus>();
+    private List<StepStatus> stepStatuses = new ArrayList<>();
 
     public void addStep(StepStatus stepStatus) {
         this.stepStatuses.add(stepStatus);
