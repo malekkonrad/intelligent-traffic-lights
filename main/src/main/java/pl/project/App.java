@@ -22,9 +22,9 @@ import pl.project.json.structures.output.StepStatusList;
  */
 public class App 
 {
-    static String inputFile = "commands/default_ped.json";
+    static String inputFile = "";
     static String outputFile = "output.json";
-    static String configFile = "config/config.json";
+    static String configFile = "config.json";
 
 
     public static void main( String... args ) throws Exception {
@@ -50,31 +50,35 @@ public class App
     }
 
 
-    public static void parseArguments(String... args)  {
+    public static void parseArguments(String... args) throws Exception {
         // parsing files name
-        try{
-
-            inputFile = args[0];
-            outputFile = args[1];
-
-        }catch (Exception e) {
-            System.out.println(e.getMessage());
+        if (args.length == 0) {
+            throw new Exception("No arguments provided. Please specify input file.");
         }
+        inputFile = args[0];
+
+        if (args.length > 1) {
+            outputFile = args[1];
+        }
+        if (args.length > 2) {
+            configFile = args[2];
+        }
+
     }
 
 
 
     public static void showLanesConfig(Map<Direction, List<Lane>> lanes){
-        for (Direction dir : lanes.keySet()) {
-            System.out.println("Direction: " + dir);
-            for (Lane lane : lanes.get(dir)) {
+        for (Map.Entry<Direction, List<Lane>> dir : lanes.entrySet()) {
+            System.out.println("Direction: " + dir.getKey());
+            for (Lane lane : lanes.get(dir.getKey())) {
                 System.out.println("  Allowed exits: " + lane.getAllowedDestinations());
             }
         }
     }
 
 
-    public static StepStatusList mainLogic(CommandList commandList, Map<Direction, List<Lane>> lanes)  {
+    public static StepStatusList mainLogic(CommandList commandList, Map<Direction, List<Lane>> lanes) throws Exception {
 
         Intersection intersection = new Intersection(lanes);
 
@@ -88,11 +92,11 @@ public class App
             } else if ("addPedestrian".equals(cmd.getType())) {
                 System.out.print(" crossing: " + cmd.getCrossingDirection() + "\n");
                 intersection.addPedestrian(new Pedestrian(cmd.getVehicleId(), cmd.getCrossingDirection()));
-            } else{
+            } else if ("step".equals(cmd.getType())) {
                 StepStatus stepStatus = intersection.step();
-
-                // add step to list that will be saved into json
                 stepStatusList.addStep(stepStatus);
+            }else{
+                throw new Exception("Incorrect command in input file.");
             }
         }
         return stepStatusList;

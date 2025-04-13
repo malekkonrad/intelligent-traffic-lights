@@ -7,11 +7,10 @@ import pl.project.traffic.vehicles.Vehicle;
 
 import java.util.*;
 
+@Setter
 @Getter
 public class Lane{
-
     private final List<Direction> allowedDestinations;
-    @Setter
     private Queue<Vehicle> vehicles;
 
 
