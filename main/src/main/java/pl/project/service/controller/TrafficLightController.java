@@ -175,7 +175,7 @@ public class TrafficLightController {
 
 
     public void updateWaitingTimes() {
-        trafficState.updateWaitingTimes(queues);
+        trafficState.updateWaitingTimes(queues, pedestriansPerDirection);
     }
 
 

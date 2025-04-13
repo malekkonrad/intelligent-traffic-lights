@@ -22,7 +22,7 @@ import pl.project.json.structures.output.StepStatusList;
  */
 public class App 
 {
-    static String inputFile = "commands/blocked.json";
+    static String inputFile = "commands/default_ped.json";
     static String outputFile = "output.json";
     static String configFile = "config/config.json";
 

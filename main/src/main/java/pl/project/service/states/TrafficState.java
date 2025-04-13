@@ -4,11 +4,13 @@ import lombok.Getter;
 import pl.project.direction.DirectionPair;
 import pl.project.direction.Direction;
 import pl.project.traffic.lanes.Lane;
+import pl.project.traffic.pedestrians.Pedestrian;
 import pl.project.traffic.vehicles.Vehicle;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 
 @Getter
@@ -20,7 +22,7 @@ public class TrafficState {
     /**
      * Updates waiting times for every DirectionPair.
      */
-    public void updateWaitingTimes(Map<Direction, List<Lane>> lanesPerDirection) {
+    public void updateWaitingTimes(Map<Direction, List<Lane>> lanesPerDirection, Map<Direction, Queue<Pedestrian>> pedestriansPerDirection) {
 
         waitingTime.clear();
         waitingVehicles.clear();
@@ -44,6 +46,14 @@ public class TrafficState {
                     waitingTime.put(pair, waitingTime.getOrDefault(pair, 0) + totalDelay);
 
                 }
+            }
+        }
+
+        for (Map.Entry<Direction, Queue<Pedestrian>> entry : pedestriansPerDirection.entrySet()){
+            Direction crossing = entry.getKey();
+            Queue<Pedestrian> pedestrians = entry.getValue();
+            for (Pedestrian pedestrian : pedestrians){
+                pedestrian.incrementDelay();
             }
         }
 
