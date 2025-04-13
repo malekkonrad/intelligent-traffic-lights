@@ -240,7 +240,7 @@ mvn clean package
 
 uruchamiamy symulację poleceniem:
 ```shell
-java -jar intelligent-traffic-lights.jar input.json output.json config.json
+java -jar ./main/target/main-1.0-jar-with-dependencies.jar input.json output.json config.json
 ```
 
 gdzie:
