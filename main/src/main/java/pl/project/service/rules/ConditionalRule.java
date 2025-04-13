@@ -1,10 +1,12 @@
-package pl.project.its;
+package pl.project.service.rules;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import pl.project.its.directions.DirectionPair;
-import pl.project.json.structures.Direction;
-import pl.project.its.pedestrian.Pedestrian;
+import pl.project.direction.DirectionPair;
+import pl.project.direction.Direction;
+import pl.project.service.states.TrafficLightPhase;
+import pl.project.service.states.TrafficState;
+import pl.project.traffic.pedestrians.Pedestrian;
 
 import java.util.Map;
 import java.util.Queue;

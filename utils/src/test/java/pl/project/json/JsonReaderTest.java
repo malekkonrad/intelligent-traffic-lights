@@ -1,13 +1,11 @@
 package pl.project.json;
 
 import org.junit.jupiter.api.Test;
-import pl.project.json.structures.Direction;
-import pl.project.json.structures.Lane;
+import pl.project.direction.Direction;
+import pl.project.traffic.lanes.Lane;
 import pl.project.json.structures.input.Command;
 import pl.project.json.structures.input.CommandList;
-import pl.project.json.structures.output.StepStatusList;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 

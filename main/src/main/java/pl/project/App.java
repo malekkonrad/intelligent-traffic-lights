@@ -3,11 +3,11 @@ package pl.project;
 import java.util.List;
 import java.util.Map;
 
-import pl.project.its.Intersection;
-import pl.project.its.pedestrian.Pedestrian;
-import pl.project.json.structures.Lane;
-import pl.project.json.structures.Vehicle;
-import pl.project.json.structures.Direction;
+import pl.project.service.intersection.Intersection;
+import pl.project.traffic.pedestrians.Pedestrian;
+import pl.project.traffic.lanes.Lane;
+import pl.project.traffic.vehicles.Vehicle;
+import pl.project.direction.Direction;
 import pl.project.json.JsonReader;
 import pl.project.json.JsonWriter;
 import pl.project.json.structures.input.Command;

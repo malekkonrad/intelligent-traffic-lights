@@ -1,8 +1,8 @@
-package pl.project.its.pedestrian;
+package pl.project.traffic.pedestrians;
 
 import lombok.Getter;
 import lombok.Setter;
-import pl.project.json.structures.Direction;
+import pl.project.direction.Direction;
 
 
 @Getter

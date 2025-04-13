@@ -1,10 +1,10 @@
-package pl.project.its;
+package pl.project.service.states;
 
 import lombok.Getter;
-import pl.project.its.directions.DirectionPair;
-import pl.project.json.structures.Direction;
-import pl.project.json.structures.Lane;
-import pl.project.json.structures.Vehicle;
+import pl.project.direction.DirectionPair;
+import pl.project.direction.Direction;
+import pl.project.traffic.lanes.Lane;
+import pl.project.traffic.vehicles.Vehicle;
 
 import java.util.HashMap;
 import java.util.List;

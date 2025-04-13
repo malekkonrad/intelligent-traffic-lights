@@ -1,7 +1,9 @@
-package pl.project.json.structures;
+package pl.project.traffic.lanes;
 
 import lombok.Getter;
 import lombok.Setter;
+import pl.project.direction.Direction;
+import pl.project.traffic.vehicles.Vehicle;
 
 import java.util.*;
 

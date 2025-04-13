@@ -1,10 +1,12 @@
-package pl.project.its;
+package pl.project.service.intersection;
 
-import pl.project.its.pedestrian.Pedestrian;
-import pl.project.json.structures.Direction;
-import pl.project.its.directions.DirectionPair;
-import pl.project.json.structures.Lane;
-import pl.project.json.structures.Vehicle;
+import pl.project.service.controller.TrafficLightController;
+import pl.project.service.rules.ConditionalRule;
+import pl.project.traffic.pedestrians.Pedestrian;
+import pl.project.direction.Direction;
+import pl.project.direction.DirectionPair;
+import pl.project.traffic.lanes.Lane;
+import pl.project.traffic.vehicles.Vehicle;
 import pl.project.json.structures.output.StepStatus;
 
 import java.util.*;
@@ -143,7 +145,7 @@ public class Intersection {
     private void processVehiclesOnConditional() {
         // Handling conditional green arrows
         for (ConditionalRule rule : conditionalRules) {
-            if (rule.isAllowed(controller.trafficState, controller.getCurrentPhase(), pedestriansPerDirection)) {
+            if (rule.isAllowed(controller.getTrafficState(), controller.getCurrentPhase(), pedestriansPerDirection)) {
                 processVehicles(rule.getDirectionPair());
             }
 

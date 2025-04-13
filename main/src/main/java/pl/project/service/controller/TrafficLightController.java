@@ -1,10 +1,13 @@
-package pl.project.its;
+package pl.project.service.controller;
 
-import pl.project.its.pedestrian.Pedestrian;
-import pl.project.json.structures.Direction;
-import pl.project.its.directions.DirectionPair;
-import pl.project.json.structures.Lane;
-import pl.project.json.structures.Vehicle;
+import lombok.Getter;
+import pl.project.service.states.TrafficLightPhase;
+import pl.project.service.states.TrafficState;
+import pl.project.traffic.pedestrians.Pedestrian;
+import pl.project.direction.Direction;
+import pl.project.direction.DirectionPair;
+import pl.project.traffic.lanes.Lane;
+import pl.project.traffic.vehicles.Vehicle;
 
 import java.util.*;
 
@@ -36,14 +39,15 @@ public class TrafficLightController {
     private final int maxWaitTime = 5;
 
 
-    private  double alpha = 1.0; // intensity weight
-    private  double beta = 0.5; // waiting time weight
+    private  double alpha = 1.0;    // intensity weight
+    private  double beta = 0.5;     // waiting time weight
     private  double gamma = 0.5;    // pedestrians weight
 
 
     private final Map<Direction, List<Lane>>  queues;
 
-    TrafficState trafficState;
+    @Getter
+    private TrafficState trafficState;
 
     private final Map<Direction, Queue<Pedestrian>> pedestriansPerDirection;
 

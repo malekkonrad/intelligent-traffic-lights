@@ -1,9 +1,9 @@
-package pl.project.its;
+package pl.project.service.states;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import pl.project.json.structures.Direction;
-import pl.project.its.directions.DirectionPair;
+import pl.project.direction.Direction;
+import pl.project.direction.DirectionPair;
 
 import java.util.Set;
 

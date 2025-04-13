@@ -2,8 +2,8 @@ package pl.project.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import pl.project.json.structures.Direction;
-import pl.project.json.structures.Lane;
+import pl.project.direction.Direction;
+import pl.project.traffic.lanes.Lane;
 import pl.project.json.structures.input.CommandList;
 
 import java.io.File;
