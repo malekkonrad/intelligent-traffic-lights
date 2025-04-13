@@ -1,0 +1,22 @@
+{
+  "north": [
+    { "allowedDestinations": ["south"] },
+    { "allowedDestinations": ["east"] },
+    { "allowedDestinations": ["west"] }
+  ],
+  "south": [
+    { "allowedDestinations": ["north"] },
+    { "allowedDestinations": ["east"] },
+    { "allowedDestinations": ["west"] }
+  ],
+  "west": [
+    { "allowedDestinations": ["north"] },
+    { "allowedDestinations": ["east"] },
+    { "allowedDestinations": ["south"] }
+  ],
+  "east": [
+    { "allowedDestinations": ["south"] },
+    { "allowedDestinations": ["north"] },
+    { "allowedDestinations": ["west"] }
+  ]
+}
