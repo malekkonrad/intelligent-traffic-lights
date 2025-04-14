@@ -242,3 +242,12 @@ gdzie:
 - input.json - plik wejściowy z komendami (wymagany żeby istniał)  
 - output.json - plik, do którego zostanie zapisany wynik symulacji (opcjonalny) - w przypadku braku podania (tworzony jest plik *output.json*)  
 - config.json - plik wejściowy z configuracją skrzyżowania (opcjonalny) - w przypadku braku podania zaczytywany jest załączony plik *config.json*
+
+
+## Wykorzystane biblioteki:
+- Maven (wymagana aby uruchomić projekt)
+- Lombok
+- JUnit 5 
+- Mockito
+- jackson
+- Jacoco (oraz SonarQube do sprawdzenia pokrycia testami)
