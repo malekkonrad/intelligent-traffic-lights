@@ -14,7 +14,7 @@ import java.util.*;
 
 
 
-public class Intersection {
+public class IntersectionManager {
 
 
     private final Map<Direction, List<Lane>> lanesPerDirection;
@@ -31,7 +31,7 @@ public class Intersection {
 
 
 
-    public Intersection(Map<Direction, List<Lane>> lanesPerDirection) {
+    public IntersectionManager(Map<Direction, List<Lane>> lanesPerDirection) {
         this.lanesPerDirection = lanesPerDirection;
 
         for (Direction direction : Direction.values()) {
@@ -66,7 +66,7 @@ public class Intersection {
         }
 
         Lane bestLane = null;
-        if (!allowedLanes.isEmpty()) {
+        if (!allowedLanes.isEmpty()) {//optional
             int bestScore = Integer.MAX_VALUE;
             for(Map.Entry<Lane, Integer> entry : allowedLanes.entrySet()) {
                 if (entry.getValue() < bestScore) {

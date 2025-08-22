@@ -3,7 +3,7 @@ package pl.project;
 import java.util.List;
 import java.util.Map;
 
-import pl.project.service.intersection.Intersection;
+import pl.project.service.intersection.IntersectionManager;
 import pl.project.traffic.pedestrians.Pedestrian;
 import pl.project.traffic.lanes.Lane;
 import pl.project.traffic.vehicles.Vehicle;
@@ -80,7 +80,7 @@ public class App
 
     public static StepStatusList mainLogic(CommandList commandList, Map<Direction, List<Lane>> lanes) throws Exception {
 
-        Intersection intersection = new Intersection(lanes);
+        IntersectionManager intersectionManager = new IntersectionManager(lanes);
 
         StepStatusList stepStatusList = new StepStatusList();
 
@@ -88,12 +88,12 @@ public class App
             System.out.print("Type: " + cmd.getType());
             if ("addVehicle".equals(cmd.getType())) {
                 System.out.print(" directions: " + cmd.getStartRoad() + " " + cmd.getEndRoad() + "\n");
-                intersection.addVehicle(new Vehicle(cmd.getVehicleId(), cmd.getStartRoad(), cmd.getEndRoad()));
+                intersectionManager.addVehicle(new Vehicle(cmd.getVehicleId(), cmd.getStartRoad(), cmd.getEndRoad()));
             } else if ("addPedestrian".equals(cmd.getType())) {
                 System.out.print(" crossing: " + cmd.getCrossingDirection() + "\n");
-                intersection.addPedestrian(new Pedestrian(cmd.getVehicleId(), cmd.getCrossingDirection()));
+                intersectionManager.addPedestrian(new Pedestrian(cmd.getVehicleId(), cmd.getCrossingDirection()));
             } else if ("step".equals(cmd.getType())) {
-                StepStatus stepStatus = intersection.step();
+                StepStatus stepStatus = intersectionManager.step();
                 stepStatusList.addStep(stepStatus);
             }else{
                 throw new Exception("Incorrect command in input file.");

@@ -3,7 +3,7 @@
 
 
 ## Przebieg algorytmu sterującego ruchem na skrzyżowaniu:
-1. Wywoływana jest metoda intersection.step(), która rozpoczyna przetwarzenie kroku symulacji
+1. Wywoływana jest metoda intersectionManager.step(), która rozpoczyna przetwarzenie kroku symulacji
 2. Aktualizowane są dane na temat pojazdów które czekają na skrzyżowaniu - wykonywana przez TrafficLightControler.updateWaitingTimes()
 3. Wywoływana jest metoda TrafficLightControler.nextStep(), która podejmuje decyzję o wyborze optymalnej fazy świateł:
     - zostają uaktualnione współczynniki wag za pomocą których wybierana jest faza w zależności od natężenia ruchu, czasu oczekiwania pojazdów, czasu oczekiwania pieszych

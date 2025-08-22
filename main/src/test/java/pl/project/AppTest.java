@@ -9,13 +9,9 @@ import static org.mockito.Mockito.*;
 import java.util.*;
 
 import pl.project.direction.Direction;
-import pl.project.json.JsonReader;
-import pl.project.json.JsonWriter;
 import pl.project.json.structures.input.Command;
 import pl.project.json.structures.input.CommandList;
-import pl.project.json.structures.output.StepStatus;
 import pl.project.json.structures.output.StepStatusList;
-import pl.project.service.intersection.Intersection;
 import pl.project.traffic.lanes.Lane;
 
 
